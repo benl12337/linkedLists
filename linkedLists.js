@@ -1,96 +1,160 @@
-function node (value) {
-    this.value = value;
-    this.next = null;
+// node class
+class node {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.next = null;
+    };
 }
 
-function linkedList() {
-    this.head = null;
-    this.tail = null;
-
-    this.append = function (value) {
-        const newNode = new node(value);
-        this.tail.next = newNode;
-        this.tail = newNode;
-    }
-    this.prepend = function (value) {
-        const newNode = new node(value);
-        newNode.next = this.head;
-        this.head = newNode;
+// linkedList class
+class linkedList {
+    constructor() {
+        this.head = null;
     }
 
-
-    this.traverse = function() {
-        let curr = this.head;
-
-        while (curr != null) {
-            console.log(curr.value);
+    // append(value) method
+    append(key, value) {
+        const newNode = new node(key,value);
+        if (!this.head) {
+            this.head = newNode;
+        } else {
+          // go to the end of the list
+          let curr = this.head;
+          while (curr.next != null) {
             curr = curr.next;
+          }  
+          curr.next = newNode;
         }
     }
 
-    this.size = function(node) {
-        // base case
-        if (node == null) return 0;
-
-        return 1 + this.size(node.next);
+    // prepend method, add node to the start of the list
+    prepend(key, value) {
+        const newNode = new node(key, value);
+        if (!this.head) {
+            this.append(key, value);
+        } else {
+            newNode.next = this.head;
+            this.head = newNode;
+        }
     }
 
-    this.at = function(node, index) {
-        // if index == 0
-        if (node == null) return 'aiyaaa';
-        if (index == 0) return node.value;
+    // size returns the size of the list
 
-        return this.at(node.next, index - 1);
+    // tail returns the last node in the list
+    tail() {
+        let curr = this.head;
+        while (curr.next != null) {
+            curr = curr.next;
+        }
+        return curr;
     }
 
-    this.pop = function() {
-       let curr = this.head;
-       let prev = null;
+    // at(index) returns the node at the given index
+    at(index) {
+        let curr = this.head;
+        let counter = 0;
 
-       while (curr.next.next != null) {
-        curr = curr.next;
-        prev = curr;
-       }
-       prev.next = null;
+        while (curr != null) {
+
+            if (counter == index) {
+                return curr;
+            }
+            counter++;
+            curr = curr.next;
+        }
+        return null;
     }
 
-    this.containsValue = function(value, node) {
-        if (node == null) return false;
-        if (node.value == value) return true;
-        return this.containsValue(value, node.next);
+    // pop removes the last element
+    pop() {
+         let curr = this.head;
+         let prev = null;
+
+         while (curr != null) {
+            prev = curr;
+            curr = curr.next;
+         }
+         prev.next = null;
     }
 
-    this.findValue = function(value, node, index) {
-        if (node == null) return null;
-        if (node.value == value) return index;
-        return this.findValue(value, node.next, index + 1);
+
+    // contains(value) returns true if the value is in the list and false if not
+    containsValue(value) {
+        
+        let curr = this.head;
+        while (curr != null) {
+            if (curr.key == value) return true;
+            curr = curr.next;
+        }
+        return false
+    }
+    // find(value) returns the index of the node containing the value or null if not found
+    find(value) {
+        let index = 0;
+        let curr = this.head;
+        while (curr != null) {
+            if (curr.key == value) return index;
+            index++;
+            curr = curr.next;
+        }
+        return null;
     }
 
-    this.toString = function(node) {
-        if (node == null) return ' null';
-        return ` (${node.value}) -> ` + this.toString(node.next);
+    // to string represents the linkedlist as (value) -> (value) -> (value) -> null
+    toString() {
+        let curr = this.head;
+        let nodeString = '';
+        while (curr != null) {
+            nodeString += `(${curr.key}, ${curr.value}) -> `;
+            curr = curr.next;
+        }
+        nodeString += 'null';
+
+        console.log(nodeString);
+    }
+
+    // insertAt(value, index) inserts a new node with the provided value at the given index
+    insertAt(key, value, index) {
+
+        if (index == 0) {
+            this.prepend(key, value);
+            return
+        }
+
+        let curr = this.head;
+        let prev = null;
+        let counter = 0;
+
+        while (counter < index) {
+            prev = curr;
+            curr = curr.next;
+            counter++;
+        }
+
+        const newNode = new node(key, value);
+        prev.next = newNode;
+        newNode.next = curr;
+    }
+
+    // removeAt(index) removes the node at the given index
+    removeAt(index) {
+        if (index == 0) {
+            this.head = this.head.next;
+            return;
+        }
+
+        let curr = this.head;
+        let prev = null;
+        let counter = 0;
+
+        while (counter < index) {
+            prev = curr;
+            curr = curr.next;
+            counter++;
+        }
+        prev.next = curr.next;
     }
 }
 
-
-
-const testList = new linkedList();
-const node1 = new node(5);
-testList.head = node1;
-testList.tail = node1;
-
-testList.append(10);
-testList.append(50);
-testList.prepend(20);
-testList.prepend(1);
-testList.append(456);
-
-testList.traverse();
-let index = 4;
-console.log(`at index ${index} the value is: ` + testList.at(testList.head, index));
-testList.pop(testList.head);
-testList.traverse();
-console.log(testList.containsValue(1, testList.head));
-console.log('index found at ' + testList.findValue(5, testList.head, 0));
-
-console.log(testList.toString(testList.head));
+const newList = new linkedList();
